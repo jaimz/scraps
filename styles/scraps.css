@@ -1,0 +1,481 @@
+html
+{
+    height: 100%;
+}
+
+body
+{
+    background-color: #f8f4ed;
+    color: #3e3e37;
+/*    background-color: #f9f8f6; */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    
+    font-family: HelveticaNeue, Arial, Colaborate-Thin, sans-serif;
+}
+
+a
+{
+    color: #4888b1;
+    text-decoration: none;
+}
+
+a:hover
+{
+    text-decoration: underline;
+}
+
+.app
+{
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+.side-panel
+{
+/*    background-color: #e8e7e1; */
+
+/*    background-image: url(blue_noise.png); */
+                                   
+    background-color: #c5d2df;
+
+/*    background-color: #e2dfcf; */
+
+
+    display: table-cell;
+    height: 100%;
+    width: 235px;
+    vertical-align: top;
+}
+
+.main-panel
+{
+    display: table-cell;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-bottom: 24px;
+}
+
+.app-title
+{
+    border-bottom-color: #964c40;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    color: #171403;
+    font-size: 48px;
+    font-family: "M+ 1c";
+    font-weight: 300;
+    
+    text-shadow: 0px 2px 1px white;
+    height: 62px;
+    line-height: 62px;
+}
+
+
+
+.app-links
+{
+    text-align: right;
+    font-size: 18px;
+    margin-bottom: 24px;
+}
+
+.link-button
+{
+    color: blue;
+    cursor: pointer;
+}
+
+.link-button:hover
+{
+
+    text-decoration: underline;
+}
+
+.user-panel
+{
+    margin-left: 24px;
+    margin-right: 10px;
+}
+
+.user-panel .register-additions
+{
+    display: none;
+}
+
+.user-panel .auth-label
+{
+
+	color: #53534a;
+
+}
+
+.user-panel a
+{
+    display: block;
+    font-size: 0.7em;
+}
+
+.user-panel a.sign-out
+{
+    text-align: right;
+}
+
+.user-panel input
+{
+    width: 100%;
+}
+
+.user-panel .message
+{
+    display: none;
+}
+
+.user-panel .message.error
+{
+    color: red;
+}
+
+.user-panel .user-name
+{
+    border-bottom-color: #964c40;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    color: #21426b;
+    font-size: 24px;
+    text-align: right;
+/*    padding-bottom: 18px;
+    padding-top: 24px; */
+    
+    height: 62px;
+    line-height: 62px;
+}
+
+.note-book
+{
+    margin-top: 56px;
+    margin-left: 24px;
+}
+
+.note-book .create-button
+{
+    text-shadow: 0px 1px 0px white;
+    text-align: right;
+    display: block;
+    font-family: Eurostile, sans-serif;
+}
+
+.note-book .note-list
+{
+    background-color: #f6f8f9;
+/*    font-family: ColaborateLight; */
+    border-top: 1px dotted #c1c0b9;
+    border-bottom: 1px dotted #c1c0b9;
+}
+
+.note-book .note-list .note-precis
+{
+    border-bottom: 1px dotted #c1c0b9; 
+    font-size: 14px;
+    padding-top: 8px;
+    padding-bottom: 6px;
+    padding-left: 15px; 
+}
+
+
+.note-book .note-list .note-precis:last-child
+{
+    border-bottom: none !important;
+}
+
+.note-precis .note-firstline
+{
+	color: #8c7f4e;
+	font-size: 12px;
+	overflow: hidden;
+	height: 1em;
+}
+
+.note-precis.selected .note-firstline
+{
+    height: 2.4em;
+}
+
+
+.note-precis .time
+{
+    color: #586a8f;
+    font-size: 12px;
+    text-align: right;
+}
+
+.note-precis.selected
+{
+    border-left-color: #606d81;
+    border-left-width: 10px;
+    border-left-style: solid;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f8f8f8));
+    padding-left: 10px;
+    border-bottom: none !important;
+    
+    -webkit-box-shadow: 0px 2px 4px #525249;
+    -moz-box-shadow: 0px 2px 4px #525249;
+    box-shadow: 0px 2px 4px #525249;
+}
+
+.note-precis.selected.unsaved
+{
+    border-left-color: #b20536;
+}
+
+.note-precis.conflicted
+{
+    border-right: 10px solid #b20536 !important;
+}
+
+.note-precis.updated
+{
+    border-right: 1px solid #b20536;
+}
+
+.note-precis .note-title
+{
+    height: 1.4em;
+    overflow: hidden;
+}
+.note-precis.selected .note-title
+{
+    font-weight: bold;
+}
+
+.note
+{
+    display: table;
+	background-color: #fefffe;
+	border: 1px solid #e8e5dd;
+    padding: 18px 20px;
+    padding-bottom: 4px;
+    height: 100%;
+    width: 100%;
+    
+    -webkit-box-shadow: 0px 2px 4px rgba(167, 162, 125, 0.5);
+    
+    -moz-box-sizing: padding-box;
+    box-sizing: border-box;
+}
+
+.note .note-attributes
+{
+    display: table-row;
+}
+
+.note .note-content
+{
+    display: table-row;
+    height: 100%;
+}
+
+.note .note-title
+{
+    border-left-style: none;
+    border-right-style: none;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-top-color: transparent;
+    font-family: "League Gothic";
+    font-size: 36px;
+    color: #525249;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border-bottom: 1px dotted #a7a27d;
+    padding-top: 4px;
+}
+
+.note .note-title:hover
+{
+    border-top: 1px dotted #cccccc;
+    background-color: #f6f6f6;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#f9f8f6), to(#ffffff));
+}
+
+.note .note-tags
+{
+    color: #797465;
+    font-size: 13px;
+    font-family: "Colaborate-Regular", Eurostile;
+    padding-top: 2px;
+    
+    /* XXX Wrong place for this */
+    padding-bottom: 30px;
+}
+
+.note .note-tags .tag-editor
+{
+/*    float: right; */
+    margin: 0;
+    padding: 0;
+    opacity: 0.5;
+}
+
+.note .note-tags .tag-editor:hover
+{
+    opacity: 1;
+}
+
+.note .note-tags .note-tag
+{
+    padding-right: 10px;
+    font-weight: normal;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.note-tag .editor
+{
+    -webkit-box-shadow: 0px 1px 2px #999;
+    -moz-box-shadow: 0px 1px 2px #999;
+    box-shadow: 0px 1px 2px #999;
+}
+
+.note-tag .label
+{
+    cursor: pointer;
+}
+
+.note-tag.displaying .editor
+{
+    display: none;
+
+}
+
+.note-tag.editing .label
+{
+    display: none;
+}
+
+
+.note-tag .editor input,
+.note-tag .editor .deleter
+{
+    margin: 0;
+    display: block;
+    outline: none;
+}
+
+.note-tag .editor input
+{
+    font-family: "Colaborate-Regular", Eurostile;
+    font-size: 13px;
+    border-bottom: 1px dotted #ccc;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    margin-top: 0px;
+    
+    outline-width: thin;    
+}
+
+.note-tag .editor .deleter
+{
+    text-align: center;
+    background-color: #ffeeee;
+    color: blue;
+}
+
+.note .note-tags .note-tag-input
+{
+    font-family: "Colaborate-Regular", Eurostile;
+    font-size: 13px;
+    border-bottom: 1px dotted #ccc;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    margin-top: 0px;
+    
+    outline-width: thin;
+}
+
+.note .note-text
+{
+/*    margin-top: 30px; */
+    width: 100%;
+    height: 100%;
+    font-style: "ColaborateLight";
+    border: none;
+    resize: none;
+}
+
+.app-frame
+{
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+
+.app-heading, .app-ctrls
+{
+    display: table-row;
+}
+
+.app-content
+{
+    display: table-row;
+    height: 100%;
+}
+
+.app-messages
+{
+    display: none;
+}
+
+.note-deleter 
+{
+    font-family: Eurostile, sans-serif;
+    display: table-row; 
+    text-align: right;
+}
+
+.note-deleter .delete-button
+{
+    color: #b20536;
+    cursor: pointer;
+}
+
+.note-deleter .cancel-button
+{
+    color: #b20536;
+    padding: 0em 1em;
+    cursor: pointer;
+}
+
+.note-deleter .confirm-button {
+    color: blue;
+    padding: 0em 1em;
+    cursor: pointer;
+}
+
+.note-deleter.confirming .delete-button
+{
+    display: none;
+}
+
+.note-deleter.resting .confirm-dialog
+{
+    display: none;
+}
+
+.note .error-banner
+{
+	color: #b20536;
+	background-color: #efdae0;
+    display: none;    
+}
+
+.app-messages.error {
+	color: #b20536;
+	background-color: #efdae0;
+}
