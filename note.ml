@@ -40,8 +40,6 @@ type t = {
   modified: float;
 } with json;;
 
-type update_list = t list with json;
-
 
 let (|>) f g = g f;;
 
@@ -70,16 +68,6 @@ let replace_volatile_note creator others =
   creator :: (List.filter (fun c -> c.Creation._id <> creator.Creation._id) others);;
 
 
-let replace_all_volatile_notes creators existing = 
-  let replacement = (
-    fun existing_json_t ->
-      try
-        List.find (fun new_c -> new_c._id = existing_c._id) creators
-      with Not_found ->
-        existing_c
-  ) in
-    List.map replacement existing;;
-
 
 let delete_permanent note_id rev author_id = 
   Couchdb.get_doc "notes" note_id >>=
@@ -101,15 +89,8 @@ let delete_permanent note_id rev author_id =
              return (Couchdb.json_of_couch_success s));;
 
 
+let update_last_author note author =
+  return ({ note with authors = (author :: (List.filter (fun s -> s <> author) note.authors)) });;
+
 let save_note note = 
   Couchdb.write_doc "notes" note._id (Json_io.string_of_json (json_of_t note));;
-
-
-let save_all update_list_string =
-  (update_list_of_json update_list_string) 
-  |> Lwt_list.map_s save_note 
-  |> Lwt_list.filter_s 
-      (fun entry -> 
-         match (Couchdb.to_couch_result entry) with
-           | Success _ -> (return false)
-           | _ -> (return true));;

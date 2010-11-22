@@ -327,61 +327,79 @@ let delete_note sp note_id rev =
                 return (Couchdb.json_of_couch_success ({ Couchdb.ok = true; Couchdb.id = "volatile"; Couchdb.rev = "volatile" }));;
 
 
-let volatile_bulk_update sp list_json = 
+  
+let bulk_update_volatile sp update_str = 
   let si = get_volatile_session_data ~table:session_table ~sp:sp () in
     match si with
-      | Notes creators ->
-      | Acc_id id ->
-          [ (
-  
-let bulk_update sp list_json update_func =
-  let result_list = 
-    (try
-       let jlist = Json_io.json_of_string list_json in
-         match jlist with
-           | Json_type.Array a ->
-               update_func jlist
-           | _ ->
-               [ (Couchdb.json_of_error { 
-                    Couchdb.error = "Expected Array when parsing updates JSON"; 
-                    Couchdb.reason = "Unexpected type" }) ]
-     with Json_error e ->
-       [ (Couchdb.json_of_error { Couchdb.error = "Problem parsing update list"; Couchdb.reason = s }) ]
-    )
-  in
-    Json_type.Build.list (fun a -> a) result_list;;
+      |Data_session_expired ->
+         return (Couchdb.make_bulk_update_failure "not_found" "Session expired")
+      | No_data ->
+          return (Couchdb.make_bulk_update_failure "note_found" "No session data")
+      | Data d ->
+          match d with
+            | Notes notes ->
+                (try
+                   let j_updates = Json_io.json_of_string update_str in
+                     match j_updates with 
+                       | Json_type.Array _ ->
+                           let updates = (Json_type.Browse.list (Note.Creation.t_of_json) j_updates) in
+                           let new_creators = 
+                             List.map (
+                               fun existing ->
+                                 try
+                                   List.find (fun update -> update.Note.Creation._id = existing.Note.Creation._id) updates
+                                 with Not_found ->
+                                   existing
+                             ) notes
+                           in
+                             set_volatile_session_data ~table:session_table ~sp (Notes new_creators);
+                             return (Json_type.Build.array [])
+                       | _ ->
+                           return (Couchdb.make_bulk_update_failure "wrong_json_type" "Expected an array")
+                 with Json_error s ->
+                   return (Couchdb.make_bulk_update_failure "json_parse_error" s))
+            | Acc_id _ ->
+                return (Couchdb.make_bulk_update_failure "wrong_session_type" "Trying to save volatile when signed in");;
 
 
-let bulk_update sp note_list = 
+
+(* returns string Lwt.t - which is the JSON encoding of a Couchdb bulk update result *)
+let bulk_update_persistent sp update_str =
   let si = get_volatile_session_data ~table:session_table ~sp:sp () in
-    (* XXX: The first two cases below are getting common - need to factor them out... *)
     match si with
       | Data_session_expired ->
-          return (Couchdb.json_of_couch_error ({ Couchdb.error = "not_found"; Couchdb.reason = "session has expired" }))
+          return (Json_io.string_of_json (Couchdb.make_bulk_update_failure "not_found" "Session expired"))
       | No_data ->
-          return (Couchdb.json_of_couch_error ({ Couchdb.error = "not_found"; Couchdb.reason = "no session data" }))          
-      | Data s ->
-          match s with
-              Acc_id id ->
-                Note.save
-            | Notes creators ->
-                set_volatile_session_data ~table:session_table ~sp (Notes (Notes.replace_all_volatile_notes note_list creators));
-                return (Couchdb.json_of_couch_success ({ Couchdb.ok = true; Couchdb.id = "volatile"; Couchdb.rev = "volatile" }));;
-                
+          return (Json_io.string_of_json (Couchdb.make_bulk_update_failure "not_found" "No session data"))
+      | Data d ->
+          match d with
+            | Acc_id id ->
+                (try
+                   let j_updates = Json_io.json_of_string update_str in
+                     match j_updates with
+                       | Json_type.Array _ ->
+                           let updates = (Json_type.Browse.list (Note.t_of_json) j_updates) in
+                             (Lwt_list.map_s
+                                (fun note ->
+                                   Note.update_last_author note id)
+                                updates) 
+                             >>=
+                               (fun note_list ->
+                                  let json_note_list = Json_type.Build.list Note.json_of_t note_list in
+                                  let json_request_data = Json_type.Build.objekt [ ( "all_or_nothing", (Json_type.Build.bool false)); ( "docs", json_note_list )] in
+                                    Couchdb.write_bulk "notes" (Json_io.string_of_json json_request_data)
+                               )
+                       | _ ->
+                           return (Json_io.string_of_json (Couchdb.make_bulk_update_failure "wrong_json_type" "Expected a list"))
+                 with Json_error s ->
+                   return (Json_io.string_of_json (Couchdb.make_bulk_update_failure "json_parse_error" s)))
+            | Notes _ ->
+                return (
+                  Json_io.string_of_json (
+                    Couchdb.make_bulk_update_failure "wrong_session_type" "Only signed in users can persist notes" 
+                  ));;
 
 
-let volatile_bulk_update sp creator_json_list = 
-  let update_fun = 
-    (fun () ->
-       set_volatile_session_data ~table:session_table ~sp (Notes (Notes.replace_all_volatile_notes note_list creators));
-       return (Json_type.Build.list (fun a -> a) [ ]);;
-       
-
-     
-let bulk_update sp note_list = 
-  let update_fun =
-    (fun () ->
-       
 
 
 let deactivate sp = 

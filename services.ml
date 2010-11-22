@@ -158,10 +158,10 @@ let bulk_update_fallback =
     prevent_get_call;;
 
 let bulk_update = Text.register_new_post_service
-  ~fallback:bulk_update_fallback =
+  ~fallback:bulk_update_fallback
   ~post_params:(string "notes")
     (fun sp () notes ->
-       Account.bulk_update sp notes >>= to_json_result);;
+       Account.bulk_update_persistent sp notes >>= (fun s -> return (s, "application/javascript")));;
 
     
 let volatile_bulk_update_fallback = 
@@ -175,5 +175,4 @@ let volatile_bulk_update = Text.register_new_post_service
   ~fallback:volatile_bulk_update_fallback
   ~post_params:(string "notes")
   (fun sp () notes ->
-     Account.volatile_bulk_update sp notes >>- to_json_result);;
-       
+     Account.bulk_update_volatile sp notes >>= to_json_result);;

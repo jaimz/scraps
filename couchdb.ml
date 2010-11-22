@@ -33,6 +33,14 @@ type couch_result =
   | Result of Json_type.t;;
 
 
+let make_bulk_update_failure error reason = 
+  let o = (Json_type.Build.objekt [
+             ("id", (Json_type.Build.string "none"));
+             ("error", (Json_type.Build.string error));
+             ("reason", (Json_type.Build.string reason))
+           ]) in
+    Json_type.Build.array [ o ];;
+
 let to_couch_result json = 
   try
     return (Error(couch_error_of_json json))
@@ -57,6 +65,9 @@ let put_call =
 
 let delete_call =
   call ~http_method:Http_header.DELETE;;
+
+let post_call = 
+  call ~http_method:Http_header.POST;;
 
 
 let raw_result frame =
@@ -97,6 +108,21 @@ let write_doc db_name doc_id doc_json =
        ()())
     >>=
       result_to_json;;
+
+let write_bulk db_name updates_json =
+  let url = (Printf.sprintf "/%s/_bulk_docs" db_name) in
+    (post_call
+       ~uri:url
+       ~content:(Some (Ocsigen_stream.of_string updates_json))
+       ()())
+    >>=
+      (fun frame ->
+         match frame.frame_content with
+             Some c -> (Ocsigen_stream.string_of_stream (Ocsigen_stream.get c))
+           | None -> return (
+               Json_io.string_of_json (make_bulk_update_failure "network_error" "Unknown (database down?)")
+             ));;
+
 
 
 let delete_doc_raw db_name doc_id doc_rev =
